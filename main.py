@@ -67,6 +67,7 @@ class Obj:
         self.ob2 = False
         self.ob3 = False
         self.ob4 = False
+        self.ob5 = False
 
     def move(self):
         if self.obj_x > 1:
@@ -84,6 +85,7 @@ obj = Obj()
 obj2 = Obj()
 obj3 = Obj()
 obj4 = Obj()
+obj5 = Obj()
 
 class Interface:
     def __init__(self):
@@ -96,14 +98,19 @@ class Interface:
         pygame.draw.line(screen, self.color, (200 + screen_height // 15, 70), (200 + screen_height // 15, 1000))
 
     def defeat(self):
-        pass
+        font = pygame.font.Font(None, 200)
+        text = "DEFEAT"
+        text_surface = font.render(text, True, (255, 0, 0))
+        screen.blit(text_surface, (300, 350))
 
 interface = Interface()
 
 clock = pygame.time.Clock()
 fps = 60
 
-while player.hp > 0:
+game_over = False
+
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -174,12 +181,33 @@ while player.hp > 0:
         obj4.obj_y = random.randint(70, 950)
         player.points += 1
     obj4.draw()
+    
+# OBJ 5
+    if player.points > 500:
+        obj.ob5 = True
+
+
+    if obj5.visible == True and obj.ob5 == True:
+        obj5.move()
+    elif obj5.visible == False and obj.ob5 == True:
+        obj5.visible = True
+        obj5.obj_x = 950
+        obj5.obj_y = random.randint(70, 950)
+        player.points += 1
+    obj5.draw()
 
     interface.draw()
+    
+    if player.hp <= 0:
+        interface.defeat()
+        game_over = True
+        
     pygame.display.flip()
     pygame.display.update()
     clock.tick(fps)
 
-interface.defeat()
-pygame.quit()
-sys.exit()
+    if game_over == True:
+        pygame.time.delay(2000)
+        pygame.quit()
+        sys.exit()
+
